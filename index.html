@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب الاحتياج اليومي وكتلة الجسم</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 300px;
+            margin: 50px auto;
+            padding: 100px;
+            background-color: #fff;
+            border-radius: 30px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>حساب الاحتياج اليومي وكتلة الجسم</h1>
+    
+    <label for="weight">الوزن (بالكيلوغرام)</label>
+    <input type="number" id="weight" placeholder="أدخل وزنك">
+
+    <label for="height">الطول (بالسنتيمتر)</label>
+    <input type="number" id="height" placeholder="أدخل طولك">
+
+    <label for="gender">الجنس</label>
+    <select id="gender">
+        <option value="male">ذكر</option>
+        <option value="female">أنثى</option>
+    </select>
+
+    <button onclick="calculateNeeds()">احسب الاحتياج اليومي وكتلة الجسم</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+function calculateNeeds() {
+    let weight = document.getElementById('weight').value;
+    let height = document.getElementById('height').value;
+    let gender = document.getElementById('gender').value;
+
+    if (!weight || !height) {
+        alert('يرجى إدخال الوزن والطول');
+        return;
+    }
+
+    // تحويل الطول من سنتيمترات إلى مترات
+    let heightInMeters = height / 100;
+
+    // حساب مؤشر كتلة الجسم (BMI)
+    let bmi = weight / (heightInMeters * heightInMeters);
+    let bmiCategory;
+
+    if (bmi < 18.5) {
+        bmiCategory = 'نقص في الوزن';
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+        bmiCategory = 'وزنك طبيعي';
+    } else if (bmi >= 25 && bmi < 29.9) {
+        bmiCategory = 'زيادة في الوزن';
+    } else {
+        bmiCategory = 'سمنة مفرطة';
+    }
+
+    // حساب معدل الأيض الأساسي (BMR)
+    let bmr;
+    if (gender === 'male') {
+        bmr = 10 * weight + 6.25 * height - 5 * 30 + 5; // العمر هنا افتراضياً 30
+    } else {
+        bmr = 10 * weight + 6.25 * height - 5 * 30 - 161; // العمر هنا افتراضياً 30
+    }
+
+    // السعرات الحرارية اليومية مع نشاط متوسط
+    let calories = bmr * 1.30;
+
+    // الاحتياج اليومي من الكربوهيدرات (45-65% من السعرات)
+    let carbs = (calories * 0.55) / 4;
+
+    // الاحتياج اليومي من الدهون (20-35% من السعرات)
+    let fats = (calories * 0.25) / 9;
+
+    // احتياج الماء باللتر (يتم تقريبها على 35 مل لكل كجم)
+    let water = weight * 0.035;
+
+    document.getElementById('result').innerHTML = `
+        <h3>النتائج</h3>
+        <p>مؤشر كتلة الجسم: ${bmi.toFixed(2)} (${bmiCategory})</p>
+        <p>السعرات الحرارية اليومية: ${calories.toFixed(2)} سعرة حرارية</p>
+        <p>الاحتياج اليومي من الكربوهيدرات: ${carbs.toFixed(2)} جرام</p>
+        <p>الاحتياج اليومي من الدهون: ${fats.toFixed(2)} جرام</p>
+        <p>احتياج الماء اليومي: ${water.toFixed(2)} لتر</p>
+    `;
+}
+</script>
+
+</body>
+</html>
